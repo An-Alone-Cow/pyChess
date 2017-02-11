@@ -19,7 +19,7 @@ def form_operation ( request, oper ):
 	func, FORM, fail_template, fail_args, success_template, success_args = form_operation_dict [ oper ]
 
 	if ( request.method == 'POST' ):
-		form = FORM ( request )
+		form = FORM ( request.POST )
 
 		if ( form.is_valid () ):
 			func ( request, form )

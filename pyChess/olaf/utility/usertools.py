@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-from ..models import *
+from olaf.models import *
 
 def login_user ( request, form ):
 	username = form.cleaned_data [ 'username' ]
@@ -12,7 +12,7 @@ def login_user ( request, form ):
 
 	return None
 
-def register_user ( form ):
+def register_user ( request, form ):
 	username = form.cleaned_data [ 'username' ]
 	password = form.cleaned_data [ 'password' ]
 	email = form.cleaned_data [ 'email' ]
@@ -21,8 +21,8 @@ def register_user ( form ):
 	user.save ()
 	userdata = UserData ( master = user )
 	userdata.save ()
-	customemailfield = CustomEmailField ( email = email, is_primary = True, user = userdata )
-	customemailfield.size ()
+	custom_email_field = CustomEmailField ( email = email, is_primary = True, user = userdata )
+	custom_email_field.save ()
 	userdata.save ()
 	user.save ()
 
