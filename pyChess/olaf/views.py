@@ -22,7 +22,7 @@ def form_operation ( request, oper ):
 		form = FORM ( request.POST )
 
 		if ( form.is_valid () ):
-			func ( request, form )
+			func ( request, form )# set in session + redirect | unvar check it and delete it
 			return render ( request, success_template, success_args )
 	else:
 		form = FORM ()

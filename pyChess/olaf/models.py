@@ -14,6 +14,12 @@ class UserData ( models.Model ):
 
 	is_active = models.BooleanField ( default = False )
 
+	@property
+	def recent_game ( self ):
+		if ( hasattr ( selt, 'game_history' ) ):
+			return self.game_history.filter ( is_recent = True ).first ()
+		return None
+
 class GameBoard ( models.Model ):
 	INITIAL_STATE = "1" * 64 #TODO
 	state = models.CharField ( max_length = 64, default = INITIAL_STATE )
