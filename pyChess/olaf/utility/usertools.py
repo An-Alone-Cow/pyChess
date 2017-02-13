@@ -9,6 +9,7 @@ def login_user ( request, form ):
 	user = authenticate ( username = username, password = password )
 
 	login ( request, user )
+	request.session.set_expiry ( 0 )
 
 	return None
 

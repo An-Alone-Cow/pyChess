@@ -21,7 +21,7 @@ class UserData ( models.Model ):
 		return None
 
 class GameBoard ( models.Model ):
-	INITIAL_STATE = "1" * 64 #TODO
+	INITIAL_STATE = '4qJUX2X8bojZVNRp1nOF053R9sMHhefbMuOkdSf4Uo'
 	state = models.CharField ( max_length = 64, default = INITIAL_STATE )
 	creation_time = models.DateTimeField ( auto_now_add = True )
 	result = models.IntegerField ( default = 0 )
