@@ -512,8 +512,15 @@ class GameBoard:
 
 					try:
 						self.move ( piece._pos, dest, side )
-						yield str ( self )
-						self.undo ()
+
+						if ( isinstance ( piece, Soldier ) and not (dest + (side, 0)) ):
+							for clas in [ Rook, Bishop, Knight, Queen ]:
+								self.promote ( dest, side, clas )
+								yield str ( self )
+								self._undo_promote ()
+						else:
+							yield str ( self )
+							self.undo ()
 					except InvalidMoveError:
 						pass
 
@@ -535,9 +542,26 @@ class GameBoard:
 				except InvalidMoveError:
 					pass
 
+	def is_mate ( self, side ):
+		ret = True
+
+		if ( self._is_check ( side ) ):
+			for x in self ( side ):
+				if ( not GameBoard ( x )._is_check ( side ) ):
+					ret = False
+		else:
+			res = False
+		return ret
+
+	def is_pot ( self, side ):
+		ret = True
+
+		if ( not self._is_check ( side ) ):
+			for x in self ( side ):
+				if ( not GameBoard ( x )._is_check ( side ) ):
+					ret = False
+		else:
+			res = False
+		return ret
+
 	# configuring first player settings in higher levels
-
-a = GameBoard ( '4qJUX2X8bojZVNRp1nOF053R9sMHhefbMuOkdSf4Uo' )
-
-for s in a ( 1 ):
-	print ( *GameBoard ( s ).translated, sep = '\n', end = '\n\n' )

@@ -12,7 +12,10 @@ class LoginForm ( forms.Form ):
 	username = forms.CharField (
 		label = "Username",
 		max_length = 64,
-		validators = [ validate_username_login_availability ]
+		validators = [
+			validate_username_login_availability,
+			validate_username_login_activatability
+		]
 	)
 	password = forms.CharField (
 		label = "Password",
@@ -66,8 +69,38 @@ class RegisterForm ( forms.Form ):
 		if ( (password is not None) and (confirm_password is not None) and password != confirm_password ):
 			self.add_error ( 'confirm_password', ValidationError ( _( "Passwords Dont Match" ), "no_password_match" ) )
 
-class UsernameOrEmailForm ( forms.Form ):#TODO needs validator
+class ResendActivationUsernameOrEmailForm ( forms.Form ):
 	search_key = forms.CharField (
 		label = "Username or Email",
-		max_length = 64
+		max_length = 64, 
+		validators = [ validate_user_search_key ]
 	)
+
+class ForgotPasswordUsernameOrEmailForm ( forms.Form ):
+	search_key = forms.CharField (
+		label = "Username or Email",
+		max_length = 64, 
+		validators = [
+			validate_user_search_key,
+			validate_user_search_key_activatability
+		]
+	)
+
+class PasswordChangeForm ( forms.Form ):
+	password = forms.CharField (
+		label = "Password",
+		widget = forms.PasswordInput (),
+	)
+	confirm_password = forms.CharField (
+		label = "Confirm Password",
+		widget = forms.PasswordInput ()
+	)
+
+	def clean ( self ):
+		super ( PasswordChangeForm, self ).clean ()
+
+		password = self.cleaned_data.get ( 'password' )
+		confirm_password = self.cleaned_data.get ( 'confirm_password' )
+
+		if ( (password is not None) and (confirm_password is not None) and password != confirm_password ):
+			self.add_error ( 'confirm_password', ValidationError ( _( "Passwords Dont Match" ), "no_password_match" ) )

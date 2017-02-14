@@ -120,3 +120,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 LOGIN_URL = '/login/'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'icp95.project@gmail.com'
+EMAIL_HOST_PASSWORD = 'ostadnowzari'
+SERVER_EMAIL = 'icp95.project@gmail.com'
