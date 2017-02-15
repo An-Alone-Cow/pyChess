@@ -1,24 +1,34 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 
-from olaf.models import ExpirableTokenField
+from django.utils import timezone
+
+from olaf.models import *
 from olaf.forms import *
 from olaf.utility import usertools
 
-# Create your views here.
-
-@login_required
 def index ( request ):
 	args = {}
 
-	message = request.session.get ( 'message' )
+	message = request.session.pop ( 'message', default = None )
 	if ( message is not None ):
 		args [ 'message' ] = message
-		del request.session [ 'message' ]
 
-	return render ( request, 'olaf/index.html', args )
+	if ( request.user.is_authenticated ):
+		f = lambda a : str ( a.date () ) + " - " + str ( a.hour ) + ":" + str ( a.minute ) + ":" + str ( a.second )
+		args [ 'game_board' ] = [[ 0 ] * 8] * 8
+		args [ 'game_list' ] = list ([str ( game.id ), f ( game.creation_time )] for game in request.user.userdata.game_history.filter ( result = 0 ).order_by ( '-creation_time' ) )
+
+		return render ( request, 'olaf/index_logged_in.html', args )
+	else:
+		args [ 'login_form' ] = LoginForm ()
+		args [ 'register_form' ] = RegisterForm ()
+		args [ 'score' ] = list ( [user.master.username, user.wins, user.loses, user.ties] for user in UserData.objects.filter ( is_active = True ) )[ : 15]
+
+		return render ( request, 'olaf/index_not_logged_in.html', args )
 
 #html files!!!!
 form_operation_dict = {
@@ -47,7 +57,7 @@ form_operation_dict = {
 		{ 'message' : "An email containing the password reset link will be sent to your email"}
 	),
 	'reset_password' : (
-		usertools.reset_password,
+		usertools.reset_password_action,
 		PasswordChangeForm,
 		'olaf/reset_password.html',
 		{},
@@ -77,6 +87,10 @@ def form_operation ( request, oper, *args ):
 			return HttpResponseRedirect ( reverse ( success_url ) )
 	else:
 		form = FORM ()
+
+	message = request.session.pop ( 'message', default = None )
+	if ( message is not None ):
+		fail_args [ 'message' ] = message
 
 	fail_args [ 'form' ] = form
 	return render ( request, fail_template, fail_args )
@@ -126,7 +140,7 @@ def activate_account ( request, token ):
 		return HttpResponseRedirect ( reverse ( 'index' ) )
 	else:
 		if ( timezone.now () <= tk.expiration_time ):
-			if ( tk.user.is_active )
+			if ( tk.user.is_active ):
 				request.session [ 'message' ] = "Account already active"
 				return HttpResponseRedirect ( reverse ( 'index' ) )
 			else:
@@ -144,10 +158,31 @@ def resend_activation_email ( request ):
 	if ( request.user.is_authenticated ):
 		return HttpResponseRedirect ( reverse ( 'index' ) )
 
-	return form_operation ( request, 'resen_activation_email' )
+	return form_operation ( request, 'resend_activation_email' )
 
 def logout_user ( request ):
 	usertools.logout_user ( request )
 
 	return HttpResponseRedirect ( reverse ( 'index' ) )
 
+def scoreboard ( request ):
+	if ( request.method == 'POST' ):
+		username = request.POST.get ( 'username' )
+		user = User.objects.filter ( username = username ).first ()
+
+		if ( user is None ):
+			request.session [ 'message' ] = "User not found"
+			return HttpResponseRedirect ( reverse ( 'olaf:scoreboard' ) )
+		else:
+			return HttpResponseRedirect ( reverse ( 'olaf:user_profile', args = (username, ) ) )
+	else:
+		args = {}
+
+		message = request.session.pop ( 'message', default = None )
+		if ( message is not None ):
+			args [ 'message' ] = message
+
+		lst = [ (user.master.username, user.wins, user.loses, user.ties) for user in UserData.objects.filter ( is_active = True ) ]
+		args [ 'lst' ] = lst
+
+		return render ( request, 'olaf/scoreboard.html', args )

@@ -15,9 +15,12 @@ class UserData ( models.Model ):
 
 	@property
 	def recent_game ( self ):
-		if ( hasattr ( selt, 'game_history' ) ):
+		if ( hasattr ( self, 'game_history' ) ):
 			return self.game_history.filter ( is_recent = True ).first ()
 		return None
+
+	class Meta:
+		ordering = [ '-wins', 'loses', '-ties' ]
 
 class GameBoard ( models.Model ):
 	INITIAL_STATE = '4qJUX2X8bojZVNRp1nOF053R9sMHhefbMuOkdSf4Uo'

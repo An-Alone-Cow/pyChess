@@ -15,11 +15,12 @@ class LoginForm ( forms.Form ):
 		validators = [
 			validate_username_login_availability,
 			validate_username_login_activatability
-		]
+		],
+		widget = forms.TextInput ( attrs = { 'placeholder' : 'Username' } )
 	)
 	password = forms.CharField (
 		label = "Password",
-		widget = forms.PasswordInput (),
+		widget = forms.PasswordInput ( attrs = { 'placeholder' : 'Password' } )
 	)
 
 	def clean ( self ):
@@ -43,21 +44,24 @@ class RegisterForm ( forms.Form ):
 				code = "invalid_username"
 			),
 			validate_username_register_availability,
-		]
+		],
+		widget = forms.TextInput ( attrs = { 'placeholder' : 'Username' } )
 	)
 
 	email = forms.EmailField (
 		label = "Email",
-		validators = [ validate_email_register_availability ]
+		validators = [ validate_email_register_availability ],
+		widget = forms.TextInput ( attrs = { 'placeholder' : 'Email' } )
 	)
 
 	password = forms.CharField (
 		label = "Password",
-		widget = forms.PasswordInput (),
+		widget = forms.PasswordInput ( attrs = { 'placeholder' : 'Passwrod' } )
+
 	)
 	confirm_password = forms.CharField (
 		label = "Confirm Password",
-		widget = forms.PasswordInput ()
+		widget = forms.PasswordInput ( attrs = { 'placeholder' : 'Confirm password' } )
 	)
 
 	def clean ( self ):
@@ -73,7 +77,8 @@ class ResendActivationUsernameOrEmailForm ( forms.Form ):
 	search_key = forms.CharField (
 		label = "Username or Email",
 		max_length = 64, 
-		validators = [ validate_user_search_key ]
+		validators = [ validate_user_search_key ],
+		widget = forms.TextInput ( attrs = { 'placeholder' : 'Username or Email' } )
 	)
 
 class ForgotPasswordUsernameOrEmailForm ( forms.Form ):
@@ -83,17 +88,18 @@ class ForgotPasswordUsernameOrEmailForm ( forms.Form ):
 		validators = [
 			validate_user_search_key,
 			validate_user_search_key_activatability
-		]
+		],
+		widget = forms.TextInput ( attrs = { 'placeholder' : 'Username or Email' } )
 	)
 
 class PasswordChangeForm ( forms.Form ):
 	password = forms.CharField (
 		label = "Password",
-		widget = forms.PasswordInput (),
+		widget = forms.PasswordInput ( attrs = { 'placeholder' : 'Password' } )
 	)
 	confirm_password = forms.CharField (
 		label = "Confirm Password",
-		widget = forms.PasswordInput ()
+		widget = forms.PasswordInput ( attrs = { 'placeholder' : 'Confirm password' } )
 	)
 
 	def clean ( self ):

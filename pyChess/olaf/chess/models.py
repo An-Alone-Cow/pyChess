@@ -565,3 +565,19 @@ class GameBoard:
 		return ret
 
 	# configuring first player settings in higher levels
+	# configure game status in higher level
+
+g = GameBoard ('4qJUX2X8bojZVNRp1nOF053R9sMHhefbMuOkdSf4Uo' )
+
+side = 1
+while ( 1 ):
+	print ( *g.translated, sep = '\n' )
+	a, b = map ( int, input ().split () )
+	c, d = map ( int, input ().split () )
+
+	try:
+		g.move ( Pos ( a, b ), Pos ( c, d ), side )
+	except:
+		print ( "invalid" )
+
+	side *= -1

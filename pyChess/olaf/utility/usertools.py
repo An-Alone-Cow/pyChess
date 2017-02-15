@@ -16,6 +16,13 @@ def login_user ( request, form ):
 	user = authenticate ( username = username, password = password )
 
 	login ( request, user )
+
+	recent = user.userdata.recent_game
+	if ( recent is not None ):
+		request.session [ 'game_id' ] = recent.id
+	else:
+		request.session.pop ( 'game_id', default = None )
+
 	request.session.set_expiry ( 0 )
 
 	return None
@@ -41,7 +48,7 @@ def register_user ( request, form ):
 	token = PasswordResetTokenGenerator ().make_token ( user )
 	send_mail(
 	    'Email Activation',
-    	'Click on <a href = \"%s\">this link</a> to activate your account' % ("http://" + request.META["HTTP_HOST"] + reverse ( 'activate_account' ) + token),
+    	'Click on <a href = \"%s\">this link</a> to activate your account' % ("http://" + request.META["HTTP_HOST"] + reverse ( 'olaf:activate_account', args = (token,) )),
     	'icp95.project@gmail.com',
     	[email],
     	fail_silently=False,
@@ -49,7 +56,7 @@ def register_user ( request, form ):
 
 	token_field = user.userdata.token
 	token_field.token = token
-	token_field.expiration_time = timezone.now () + datetime.timedelta(days=3)
+	token_field.expiration_time = timezone.now () + timezone.timedelta(days=3)
 	token_field.save ()
 
 	return None
@@ -68,7 +75,7 @@ def init_pass_reset_token ( request, form ):
 	token = PasswordResetTokenGenerator ().make_token ( user )
 	send_mail(
 	    'Email Activation',
-    	'Click on <a href = \"%s\">this link</a> to re-set your password' % ("http://" + request.META["HTTP_HOST"] + reverse ( 'reset_password_action' ) + token),
+    	'Click on <a href = \"%s\">this link</a> to re-set your password' % ("http://" + request.META["HTTP_HOST"] + reverse ( 'olaf:reset_password_action', args = (token,) ) ),
     	'icp95.project@gmail.com',
     	[email],
     	fail_silently=False,
@@ -76,7 +83,7 @@ def init_pass_reset_token ( request, form ):
 
 	token_field = user.userdata.token
 	token_field.token = token
-	token_field.expiration_time = timezone.now () + datetime.timedelta(days=1)
+	token_field.expiration_time = timezone.now () + timezone.timedelta(days=1)
 	token_field.save ()
 
 def reset_password_action ( request, form, token ):
@@ -99,7 +106,7 @@ def resend_activation_email ( request, form ):
 	token = PasswordResetTokenGenerator ().make_token ( user )
 	send_mail(
 	    'Email Activation',
-    	'Click on <a href = \"%s\">this link</a> to activate your account' % ("http://" + request.META["HTTP_HOST"] + reverse ( 'activate_account' ) + token),
+    	'Click on <a href = \"%s\">this link</a> to activate your account' % ("http://" + request.META["HTTP_HOST"] + reverse ( 'olaf:activate_account', args = (token,) ) ),
     	'icp95.project@gmail.com',
     	[email],
     	fail_silently=False,
@@ -107,7 +114,7 @@ def resend_activation_email ( request, form ):
 
 	token_field = user.userdata.token
 	token_field.token = token
-	token_field.expiration_time = timezone.now () + datetime.timedelta(days=3)
+	token_field.expiration_time = timezone.now () + timezone.timedelta(days=3)
 	token_field.save ()
 
 def logout_user ( request ):

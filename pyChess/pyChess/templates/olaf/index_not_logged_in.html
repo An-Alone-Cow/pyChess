@@ -1,0 +1,228 @@
+<html>
+    <head>
+        <style type="text/css">
+            body {
+                margin: 0 0 0 0;
+            }
+
+           .header {
+                float: ;
+                width: 100%;
+                margin: 0px;
+                height: 7%;
+                background-color: rgb(29,30,66);
+            }
+            .header_item{
+                float: left;
+                padding: 4px;
+                color: rgb(255, 102, 0);
+                padding-top: 9px;
+                margin-left: 7px;
+                margin-right: 7px;
+                font-weight: bold;
+            }
+            .container {
+                width: 100%;
+                margin: 0px;
+                height: 93%;
+                background-color: rgb(90,22,22);
+            } 
+
+            .sign_in_wrapper {
+                float: right;
+                background-color: rgb(214,183,34);
+                width: 22%;
+                height: auto;
+                margin-right: 4%;
+                margin-top:3%;
+                text-align: center;
+                border-bottom-right-radius: 15px;
+                border-bottom-left-radius: 15px;
+                border-color: rgb(103,152,152);
+                border-width: 2px;
+                border-style: solid;
+            }
+            input[type="text"] {
+                width: 94%;
+                background-color: #4CAF50;
+                color: white;
+                padding: 14px 20px;
+                margin: 8px 3% 3%;
+                border: none;
+                border-radius: 4px;
+                text-align: center;
+            }
+            input[type="password"] {
+                width: 94%;
+                background-color: #4CAF50;
+                color: white;
+                padding: 14px 20px;
+                margin: 8px 3% 3%;
+                border: none;
+                border-radius: 4px;
+                text-align: center;
+            }
+            .custom_submit {
+                width: 94%;
+                background-color: rgb(128, 0, 85);
+                color: white;
+                padding: 14px 20px;
+                margin: 8px 3% 3%;
+                border: none;
+                border-radius: 4px;
+                text-align: center;
+            }
+            .error_list {
+                width: 94%;
+                padding: 14px 20px;
+                margin: 8px 3% 3%;
+                border: none;
+                text-align: left;
+                color: red;
+            }
+
+            .input_element {
+                margin: auto;
+            }
+            .scoreboard_wrapper {
+                float: left;
+                overflow-y: auto;
+                width: 65%;
+                margin-top:4%;
+                margin: 3%;
+                height: 85%;
+                background-color: rgb(177,114,42);
+                border-radius: 15px;
+                border-color: rgb(103,152,152);
+                border-width: 2px;
+                border-style: solid;
+            }
+            .scoreboard_item {
+                width: 94%;
+                margin-right: 3%;
+                margin-left: 3%;
+                margin-top: 10px;
+                border-width: 1px;
+                background-color: rgb(255, 51, 0);
+                border-color: rgb(255, 51, 0);
+                border-radius: 10px;
+            }
+
+            .sign_in_button {
+                float:left;
+                background-color: rgb(73,104,104);
+                padding-top: 10px;
+                padding-bottom: 10px;
+                width: 50%;
+                border: none;
+                text-align: center;
+            }
+
+            .black {
+                float: left;
+                width: 128px;
+                height: 128px;
+                background-color: #999;
+                    font-size:50px;
+                text-align:center;
+                display: table-cell;
+                vertical-align:middle;
+            }
+            .white {
+                float: left;
+                width: 128px;
+                height: 128px;
+                background-color: #fff;
+                    font-size:50px;
+                text-align:center;
+                display: table-cell;
+                vertical-align:middle;
+            }
+
+            .is_active {
+                border-bottom-width: 2px;
+                background-color: rgb(103,152,152);
+                border-bottom-style: solid;
+                border-bottom-color: rgb(90,22,22);
+            }
+        </style>
+        <script type = "text/javascript">
+            function LoginClick() {
+                var login_header = document.getElementById('login_header');
+                var register_header = document.getElementById('register_header');
+                var login = document.getElementById('login');
+                var register = document.getElementById('register');
+
+                login.style.display = 'block';
+                login_header.className = register_header.className.replace ( /(?:^|\s)is_active(?!\S)/g , '' )
+                login_header.className += " is_active";
+
+                register.style.display = 'none';
+                register_header.className = register_header.className.replace ( /(?:^|\s)is_active(?!\S)/g , '' )
+            }
+            function RegisterClick() {
+                var login_header = document.getElementById('login_header');
+                var register_header = document.getElementById('register_header');
+                var login = document.getElementById('login');
+                var register = document.getElementById('register');
+
+                register.style.display = 'block';
+                register_header.className = login_header.className.replace ( /(?:^|\s)is_active(?!\S)/g , '' )
+                register_header.className += " is_active";
+
+                login.style.display = 'none';
+                login_header.className = login_header.className.replace ( /(?:^|\s)is_active(?!\S)/g , '' )
+            }
+        </script>
+    </head>
+
+    <body class = "body">
+        <div class = "header">
+            <div class = "header_item">
+                <a href="{% url 'index' %}" style = "text-decoration: none; color: rgb(255, 102, 0);">Home</a>
+            </div>
+            <div class = "header_item">
+                <a href="{% url 'olaf:scoreboard' %}" style = "text-decoration: none; color: rgb(255, 102, 0);">Scoreboard</a>
+            </div>
+        </div>
+        <div class = "container">
+            <div class = "sign_in_wrapper">
+                <div>
+                    <input type = "submit" id = "login_header" value = "Login" class = "sign_in_button is_active" onclick = "LoginClick()">
+                </div>
+                <div>
+                    <input type = "submit" id = "register_header" value = "Register" class = "sign_in_button" onclick = "RegisterClick()">
+                </div>
+                <div id = "register" style = "display: none;">
+                    <form action = "{% url 'olaf:register' %}" method = "POST">
+                        {% csrf_token %}
+                        {% for field in register_form %}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class = "error_list">{{ field.errors }}</div>
+                            {% endif %}
+                        {% endfor %}
+                        <input type = "submit" value = "Register" class = "custom_submit">
+                    </form>
+                </div>
+                <div id = "login">
+                    <form action = "{% url 'olaf:login' %}" method = "POST">
+                        {% csrf_token %}
+                        {% for field in login_form %}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class = "error_list">{{ field.errors }}</div>
+                            {% endif %}
+                        {% endfor %}
+                        <input type = "submit" value = "Login" class = "custom_submit">
+                    </form>
+                </div>
+            </div>
+            <div class = "scoreboard_wrapper">
+                {% for item in list %}
+                    <div class = "scoreboard_item">{{ item.0 }} : {{ item.1 }} Wins, {{ item.2 }} Loses and {{ item.3 }} Ties</div>
+                {% endfor %}
+            </div>
+        </div>
+    </body>
+</html>
