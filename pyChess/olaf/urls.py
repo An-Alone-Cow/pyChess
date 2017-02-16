@@ -11,8 +11,8 @@ urlpatterns = [#function assignment
 	url ( r'^activate/([0-9A-Za-z\-]*)/?$', views.activate_account, name = 'activate_account' ),
 	url ( r'^resend_email/$', views.resend_activation_email, name = 'resend_activation_email' ),
 	url ( r'^logout/?$', views.logout_user, name = 'logout' ),
-
 	url ( r'^scoreboard/?$', views.scoreboard, name = 'scoreboard' ),
+	url ( r'^move/?$', views.move, name = 'move_parser' ),
 
 	#url ( r'^profile/?$', , name = 'profile' ),
 	#url ( r'^user/([a-zA-Z][a-zA-Z0-9_]*)/?$', , name = 'user_profile' ),

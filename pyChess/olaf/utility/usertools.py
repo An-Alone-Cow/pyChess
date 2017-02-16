@@ -10,6 +10,8 @@ from django.urls import reverse
 
 from olaf.models import *
 
+from olaf.chess.models import GameBoard as ChessBoard
+
 def login_user ( request, form ):
 	username = form.cleaned_data [ 'username' ]
 	password = form.cleaned_data [ 'password' ]
@@ -121,3 +123,15 @@ def logout_user ( request ):
 	logout ( request )
 
 	return None
+
+def new_game ( request ):
+	g = GameBoard ( user = request.user.userdata )
+	g.save ()
+
+	return g.id
+
+def get_translated_game_board ( request ):
+	if ( GameBoard.objects.filter ( id = request.session.get ( 'game_id' ) ).first () is None ):
+		return None
+	else:
+		return ChessBoard ( GameBoard.objects.filter ( id = request.session.get ( 'game_id' ) ).first ().state ).translated

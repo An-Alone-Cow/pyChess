@@ -12,7 +12,7 @@
                 height: 7%;
                 background-color: rgb(29,30,66);
             }
-            .header_item{
+            .header_item {
                 float: left;
                 padding: 4px;
                 color: rgb(255, 102, 0);
@@ -20,6 +20,20 @@
                 margin-left: 7px;
                 margin-right: 7px;
                 font-weight: bold;
+            }
+            .message {
+                background-color: rgb(102, 204, 255);
+                width:100%;
+                height:auto;
+                padding-bottom: 10px;
+                color: rgb(255, 0, 0);
+                font-weight: bold;
+                position: absolute;
+                border-bottom-right-radius: 15px;
+                border-bottom-left-radius: 15px;
+                opacity: 0.75;
+                text-align: center;
+                font-size: 19;
             }
             .container {
                 width: 100%;
@@ -103,7 +117,7 @@
                 margin-left: 3%;
                 margin-top: 10px;
                 border-width: 1px;
-                background-color: rgb(255, 51, 0);
+                background-color: #00960C;
                 border-color: rgb(255, 51, 0);
                 border-radius: 10px;
             }
@@ -186,6 +200,9 @@
             </div>
         </div>
         <div class = "container">
+            {% if message %}
+                <div class = "message">{{message}}</div>
+            {% endif %}
             <div class = "sign_in_wrapper">
                 <div>
                     <input type = "submit" id = "login_header" value = "Login" class = "sign_in_button is_active" onclick = "LoginClick()">
@@ -219,7 +236,7 @@
                 </div>
             </div>
             <div class = "scoreboard_wrapper">
-                {% for item in list %}
+                {% for item in score %}
                     <div class = "scoreboard_item">{{ item.0 }} : {{ item.1 }} Wins, {{ item.2 }} Loses and {{ item.3 }} Ties</div>
                 {% endfor %}
             </div>

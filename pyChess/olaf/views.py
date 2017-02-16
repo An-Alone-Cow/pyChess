@@ -10,6 +10,8 @@ from olaf.models import *
 from olaf.forms import *
 from olaf.utility import usertools
 
+from olaf.chess.controller import proccess_move
+
 def index ( request ):
 	args = {}
 
@@ -18,19 +20,32 @@ def index ( request ):
 		args [ 'message' ] = message
 
 	if ( request.user.is_authenticated ):
+		if ( request.method == 'POST' ):
+			if ( request.POST.get ( 'game_id' ) is not None ):
+				game_id = request.POST.get ( 'game_id' )
+				if ( game_id == '-1' ):
+					game_id = usertools.new_game ( request )
+
+				request.session [ 'game_id' ] = game_id
+			else:
+				request.session.pop ( 'game_id', default = None )
+
 		f = lambda a : str ( a.date () ) + " - " + str ( a.hour ) + ":" + str ( a.minute ) + ":" + str ( a.second )
-		args [ 'game_board' ] = [[ 0 ] * 8] * 8
 		args [ 'game_list' ] = list ([str ( game.id ), f ( game.creation_time )] for game in request.user.userdata.game_history.filter ( result = 0 ).order_by ( '-creation_time' ) )
+
+		if ( request.session.get ( 'game_id' ) is not None ):
+			args [ 'game_board' ] = usertools.get_translated_game_board ( request )
+		else:
+			args [ 'game_board' ] = None
 
 		return render ( request, 'olaf/index_logged_in.html', args )
 	else:
 		args [ 'login_form' ] = LoginForm ()
 		args [ 'register_form' ] = RegisterForm ()
-		args [ 'score' ] = list ( [user.master.username, user.wins, user.loses, user.ties] for user in UserData.objects.filter ( is_active = True ) )[ : 15]
+		args [ 'score' ] = list ( [user.master.username, user.wins, user.loses, user.ties] for user in UserData.objects.filter ( is_active = True ) )
 
 		return render ( request, 'olaf/index_not_logged_in.html', args )
 
-#html files!!!!
 form_operation_dict = {
 	'login' : (
 		usertools.login_user,
@@ -163,6 +178,7 @@ def resend_activation_email ( request ):
 def logout_user ( request ):
 	usertools.logout_user ( request )
 
+	request.session [ 'message' ] = "Goodbye :)"
 	return HttpResponseRedirect ( reverse ( 'index' ) )
 
 def scoreboard ( request ):
@@ -185,4 +201,12 @@ def scoreboard ( request ):
 		lst = [ (user.master.username, user.wins, user.loses, user.ties) for user in UserData.objects.filter ( is_active = True ) ]
 		args [ 'lst' ] = lst
 
+		if ( request.user.is_authenticated ):
+			args [ 'logged_in' ] = True
+
 		return render ( request, 'olaf/scoreboard.html', args )
+
+def move ( request ):
+	proccess_move ( request )
+
+	return HttpResponseRedirect ( reverse ( 'index' ) )

@@ -23,6 +23,20 @@
                 margin-right: 7px;
                 font-weight: bold;
             }
+            .message {
+                background-color: rgb(102, 204, 255);
+                width:100%;
+                height:auto;
+                padding-bottom: 10px;
+                color: rgb(255, 0, 0);
+                font-weight: bold;
+                position: absolute;
+                border-bottom-right-radius: 15px;
+                border-bottom-left-radius: 15px;
+                opacity: 0.75;
+                text-align: center;
+                font-size: 19;
+            }
             .container {
                 width: 100%;
                 margin: 0px;
@@ -113,22 +127,34 @@
         </div>
 
         <div class = "container">
+            {% if message %}
+                <div class = "message">{{message}}</div>
+            {% endif %}
             <div class = "gameboard_wrapper">
                 {% for i in "01234567" %}
                     {% for j in "01234567" %}
                         {% if i|add:j|iseven %}
                             <div class = "white">
-                                <!-{% static game_board|index:i|index:j %}-!>
-                                {{ game_board|index:i|index:j }}
+                                {% if game_board %}
+                                    <!-{% static game_board|index:i|index:j %}-!>
+                                    {{ game_board|index:i|index:j }}
+                                {% endif %}
                             </div>
                         {% else %}
                             <div class = "black">
-                                <!-{% static game_board|index:i|index:j %}-!>
-                                {{ game_board|index:i|index:j }}
+                                {% if game_board %}
+                                    <!-{% static game_board|index:i|index:j %}-!>
+                                    {{ game_board|index:i|index:j }}
+                                {% endif %}
                             </div>
                         {% endif %}
                     {% endfor %}
                 {% endfor %}
+                <form action = "{% url 'olaf:move_parser' %}" method = "POST">
+                    {% csrf_token %}
+                    <input type = "text" name = "move" >
+                    <input type = "submit" value = "move" >
+                </form>
             </div>
             <div class = "game_history_wrapper">
                 <form action = "{% url 'index' %}" method = "POST">

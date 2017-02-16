@@ -176,7 +176,7 @@ class King ( Piece ):
 		arr = self._board
 		for v in vec:
 			p = self._pos + v
-			if ( p and arr [ p ]._side * self._side != 1 ):
+			if ( p and ((not arr [ p ]) or (arr [ p ] and arr [ p ]._side * self._side != 1)) ):
 				yield p
 #####
 
@@ -296,7 +296,7 @@ class GameBoard:
 
 	@property
 	def translated ( self ):
-		return [ list ( map ( lambda x : x.parsed () , p ) ) for p in self._mat ]
+		return list ( reversed ( [ list ( map ( lambda x : x.parsed () , p ) ) for p in self._mat ] ) )
 
 	def _is_check ( self, side, p = None ):
 		if ( p is None ):
@@ -516,10 +516,10 @@ class GameBoard:
 						if ( isinstance ( piece, Soldier ) and not (dest + (side, 0)) ):
 							for clas in [ Rook, Bishop, Knight, Queen ]:
 								self.promote ( dest, side, clas )
-								yield str ( self )
+								yield 0
 								self._undo_promote ()
 						else:
-							yield str ( self )
+							yield 0
 							self.undo ()
 					except InvalidMoveError:
 						pass
@@ -527,7 +527,7 @@ class GameBoard:
 				for dest in lst:
 					try:
 						self.move ( piece._pos, dest, side )
-						yield str ( self )
+						yield 0
 						self.undo ()
 					except InvalidMoveError:
 						pass
@@ -537,7 +537,7 @@ class GameBoard:
 			if ( self [ p1 ] and self [ p2 ] and self [ p1 ]._side == side == self [ p2 ]._side ):
 				try:
 					self.move ( p1, p2, side )
-					yield str ( self )
+					yield 0
 					self.undo ()
 				except InvalidMoveError:
 					pass
@@ -546,11 +546,11 @@ class GameBoard:
 		ret = True
 
 		if ( self._is_check ( side ) ):
-			for x in self ( side ):
-				if ( not GameBoard ( x )._is_check ( side ) ):
+			for i in self ( side ):
+				if ( not self._is_check ( side ) ):
 					ret = False
 		else:
-			res = False
+			ret = False
 		return ret
 
 	def is_pot ( self, side ):
@@ -558,26 +558,11 @@ class GameBoard:
 
 		if ( not self._is_check ( side ) ):
 			for x in self ( side ):
-				if ( not GameBoard ( x )._is_check ( side ) ):
+				if ( not self._is_check ( side ) ):
 					ret = False
 		else:
-			res = False
+			ret = False
 		return ret
 
 	# configuring first player settings in higher levels
 	# configure game status in higher level
-
-g = GameBoard ('4qJUX2X8bojZVNRp1nOF053R9sMHhefbMuOkdSf4Uo' )
-
-side = 1
-while ( 1 ):
-	print ( *g.translated, sep = '\n' )
-	a, b = map ( int, input ().split () )
-	c, d = map ( int, input ().split () )
-
-	try:
-		g.move ( Pos ( a, b ), Pos ( c, d ), side )
-	except:
-		print ( "invalid" )
-
-	side *= -1

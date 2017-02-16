@@ -110,3 +110,16 @@ class PasswordChangeForm ( forms.Form ):
 
 		if ( (password is not None) and (confirm_password is not None) and password != confirm_password ):
 			self.add_error ( 'confirm_password', ValidationError ( _( "Passwords Dont Match" ), "no_password_match" ) )
+
+class MoveForm ( forms.Form ):
+	move = forms.CharField (
+		label = "Move",
+		max_length = 64,
+		validators = [
+			RegexValidator (
+				regex = "^[a-hA-H][0-9] [a-hA-H][0-9]$",
+				message = "Invalid Move",
+				code = "invalid_move"
+			)
+		]
+	)
